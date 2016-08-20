@@ -1,0 +1,20 @@
+- pip install requests
+
+- Create developer login
+- Create an app
+- Add product 'Facebook Login' - Add oauth redirect url.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
