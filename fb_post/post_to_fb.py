@@ -19,17 +19,17 @@ FB_PAGE_ID = "935683393225672"
 def parse_file():
     line_count = 1
 
-    photos = []
+    photo = ""
     link = ""
     desc = ""
     
     f = open(file_path, 'r')
     for line in f:
-        if line_count <= 10:
-            # read photos!
+        if line_count == 1:
+            # read photo!
             if line.strip():
-                photos.append(line.strip())
-        elif line_count == 11:
+                photo = line.strip()
+        elif line_count == 2:
             # read link!
             if line.strip():
                 link = line.strip()
@@ -40,15 +40,15 @@ def parse_file():
         line_count += 1
 
     f.close()
-    return (photos, link, desc)
+    return (photo, link, desc)
 
 
-def make_post(page_token, photos, link, desc):
+def make_post(page_token, photo, link, desc):
     post_url = "https://graph.facebook.com/v2.7/%s/feed" % FB_PAGE_ID
     args = {}
-    if photos:
+    if photo:
         post_url = "https://graph.facebook.com/v2.7/%s/photos" % FB_PAGE_ID
-        args['url'] = photos[0]
+        args['url'] = photo
     if desc:
         args["message"] = desc
     if link:
@@ -154,8 +154,8 @@ def fb_post():
         if not page_token:
             raise Exception("Page not found")
 
-        photos, link, desc = parse_file()
-        make_post(page_token, photos, link, desc)
+        photo, link, desc = parse_file()
+        make_post(page_token, photo, link, desc)
 
         print "\nSuccess!"
 
