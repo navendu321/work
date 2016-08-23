@@ -7,6 +7,21 @@
 
 
 
+Pre-Req
+
+1. Change OAUTH redirect URL
+   https://www.facebook.com/connect/login_success.html
+
+2. Goto https://developers.facebook.com/tools/accesstoken/
+   Click on user token debug
+   Click on extend access token
+   Store extend access token in token.txt
+
+https://developers.facebook.com/docs/facebook-login/access-tokens/expiration-and-extension
+
+
+
+
 
 
 
