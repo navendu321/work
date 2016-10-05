@@ -6,15 +6,18 @@ from openpyxl import load_workbook
 from openpyxl import Workbook
 import webbrowser
 
+# ADD SERIAL NUMBER (1 or 10501)
+# combine ing and ing count!
+
 def insert_excel():
 
-    file_path = '/home/navendu/Downloads/recipe_bank_v3_9.11.xlsx'
+    file_path = '/home/navendu/Downloads/recipes_351_700.xlsx'
     book = load_workbook(file_path)
     sheet_name = 'recipe_bank'
     sheet = book.get_sheet_by_name(sheet_name)
 
-    page_count = 1
-    page_max = 351
+    page_count = 351
+    page_max = 701
     while page_count != page_max:
 
         url ="http://food2fork.com/api/search"
@@ -34,9 +37,9 @@ def insert_excel():
                           i.get("f2f_url", ""),
                           i.get("title", ""),
                           i.get("source_url", ""),
-                          i.get("recipe_id", ""),
+                          i.get("recipe_id", "").replace("'", ""),
                           i.get("image_url", ""),
-                          i.get("social_rank", ""),
+                          i.get("social_rank", "").replace("'", ""),
                           i.get("publisher_url", "")])
 
         page_count += 1
@@ -77,13 +80,13 @@ def insert_excel():
 
 
 def insert_ingredient_count():
-    file_path = '/home/navendu/Downloads/all_records.xlsx'
+    file_path = '/home/navendu/Downloads/recipes_351_700.xlsx'
     book = load_workbook(file_path)
     sheet_name = 'recipe_bank'
     sheet = book.get_sheet_by_name(sheet_name)
 
     row = 1
-    for i in sheet.columns[1]:
+    for i in sheet.columns[2]:
 
         if sheet.cell(row=row, column=11).value:
             row += 1
@@ -93,17 +96,69 @@ def insert_ingredient_count():
         url = i.value
         if 'food2fork' in url:
             resp = urllib2.urlopen(url)
-            count = resp.read().count('itemprop="ingredients"')
-            sheet.cell(row=row, column=11).value = count
+            op = resp.read()
+
+            count = op.count('itemprop="ingredients"')
+
+            items = op.split('<li itemprop="ingredients">')
+            items = items[1:]
+            ings = []
+            for i in items:
+                one_ing = i.split('</li>')[0].strip()
+                ings.append(one_ing)
+
+            sheet.cell(row=row, column=12).value = count
+            sheet.cell(row=row, column=13).value = "\n".join(ings)
+
             row += 1
             sleep(1)
-
             if row % 100 == 0:
                 book.save(file_path)
 
     book.save(file_path)
 
 
+
+
+def add_ingredients():
+    file_path = '/home/navendu/Downloads/All_Records_v4_9.27_bak.xlsx'
+    book = load_workbook(file_path)
+    sheet_name = 'All_Records_v4_9.13 (10500 Reco'
+    sheet = book.get_sheet_by_name(sheet_name)
+
+
+    row = 1
+    for i in sheet.columns[2]:
+
+        if sheet.cell(row=row, column=13).value:
+            row += 1
+            continue
+
+        print row
+        url = i.value
+        if 'food2fork' in url:
+            resp = urllib2.urlopen(url)
+            op = resp.read()
+            items = op.split('<li itemprop="ingredients">')
+            items = items[1:]
+
+            ings = []
+            for i in items:
+                one_ing = i.split('</li>')[0].strip()
+                ings.append(one_ing)
+
+            sheet.cell(row=row, column=13).value = "\n".join(ings)
+            row += 1
+            sleep(1)
+            if row % 20 == 0:
+                book.save(file_path)
+
+    book.save(file_path)
+
+
+
+
 if __name__ == "__main__":
     #insert_excel()
-    insert_ingredient_count()
+    #insert_ingredient_count()
+    add_ingredients()
