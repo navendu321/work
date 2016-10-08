@@ -1,7 +1,0 @@
-- pip install gunicorn
-
-- 
-
-
-BaseCommand!
-/opt/www/worknow_venv/local/lib/python2.7/site-packages/gunicorn/management/commands/run_gunicorn.py
